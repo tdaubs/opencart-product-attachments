@@ -6,11 +6,11 @@ opencart-product-attachments
 
 ### Usage:
 
-1) Drop the files from the 'upload' folder into the directories as they are set out.
-2) In both config files, define the following (correcting the path for your own installation):
+- Drop the files from the 'upload' folder into the directories as they are set out.
+- In both config files, define the following (correcting the path for your own installation):
 	define('DIR_PDFS', '/{PATH}/{TO}/{YOUR_SITE_FILES_ROOT}/product_pdfs/');
-3) Click install for the product pdfs module in your admin modules page.
-4) For Usage Instructions, head to http://davidpeach.co.uk/plugins/opencart-product-attachments/
+- Click install for the product pdfs module in your admin modules page.
+- For Usage Instructions, head to http://davidpeach.co.uk/plugins/opencart-product-attachments/
 
 ### Bug tracker:
 Any bugs / errors / suggestions please contact me at dpeach27@gmail.com or on twitter @davidpeach1
