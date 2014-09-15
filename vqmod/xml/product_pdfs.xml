@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Product PDFs</id>
+	<version>1.0</version>
+	<vqmver>2.3.2</vqmver>
+	<author>David Peach</author>
+	<file name="admin/controller/catalog/product.php">
+		<operation>
+			<search position="after"><![CDATA[
+			public function update() {
+				]]></search>
+			<add><![CDATA[
+			$this->load->model('module/product_pdfs');
+				]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$this->model_catalog_product->editProduct($this->request->get['product_id'], $this->request->post);
+				]]></search>
+			<add><![CDATA[
+			if($this->request->post['pdf_attachment'] != 0){
+				$this->model_module_product_pdfs->pdfAttach($this->request->get['product_id'], $this->request->post['pdf_attachment']);
+			}
+				]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$this->data['entry_stock_status']
+				]]></search>
+			<add><![CDATA[
+			$this->data['entry_product_pdfs']	=	$this->language->get('entry_product_pdfs');
+			$this->data['entry_upload_pdf']		=	$this->language->get('entry_upload_pdf');
+				]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+				$this->data['cancel'] =
+				]]></search>
+			<add><![CDATA[
+				$this->data['pdf_remove_action'] = $this->url->link('module/product_pdfs/removepdf', 'token=' . $this->session->data['token'] . '&admin_section=product' . $url , 'SSL');
+				]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$this->load->model('localisation/language');
+				]]></search>
+			<add><![CDATA[
+			$this->data['product_pdfs']	=	array();
+	    	if( isset($this->request->get['product_id']) ){
+	    		$this->data['pdf_list']	=	$this->model_module_product_pdfs->getPdfSelectList($this->request->get['product_id']);
+	    		$product_pdfs	=	$this->model_module_product_pdfs->getProductPdfs($this->request->get['product_id']);
+	    		foreach ($product_pdfs as $pdf) {
+	    			$this->data['product_pdfs'][]	=	$pdf;
+	    		}
+	    	}
+				]]></add>
+		</operation>
+    </file>
+    <file name="admin/language/english/catalog/product.php">
+    	<operation>
+    		<search position="before"><![CDATA[
+			$_['entry_manufacturer']
+    			]]></search>
+    		<add><![CDATA[
+			$_['entry_upload_pdf']		= 'Attach Product PDFs';
+			$_['entry_product_pdfs']	= 'Currently Attached PDFs';
+    			]]></add>
+    	</operation>
+    </file>
+    <file name="admin/view/template/catalog/product_form.tpl">
+    	<operation>
+    		<search offset="2" position="before"><![CDATA[
+			echo $entry_keyword;
+    			]]></search>
+    		<add><![CDATA[
+			<?php if(!empty($product_pdfs)): ?>
+            <tr>
+              <td><?php echo $entry_product_pdfs; ?></td>
+              <td>
+                <?php foreach ($product_pdfs as $pdf):
+                  extract($pdf);
+                ?>
+                  <span><a href="/pdf/<?php echo $filename; ?>"><?php echo $display_name; ?></a>&nbsp;&nbsp;<a class="js-remove-pdf-button" href="<?php echo $pdf_remove_action.$unattach_params; ?>">[remove]</a></span><br>
+                <?php endforeach; ?>
+              </td>
+            </tr>
+            <?php endif; ?>
+            
+            <?php if(isset($pdf_list) && !empty($pdf_list)): ?>
+	            <tr>
+	              <td><?php echo $entry_upload_pdf; ?></td>
+	              <td>
+	                <select name="pdf_attachment">
+	                  <option value="0">-- None Selected --</option>
+	                  <?php foreach($pdf_list as $pdf): 
+	                  extract($pdf);
+	                  ?>
+	                    <option value="<?php echo $pdf_id; ?>"><?php echo $display_name; ?></option>
+	                  <?php endforeach; ?>
+	                </select>
+	              </td>              
+	            </tr>
+            <?php endif; ?>
+    			]]></add>
+    	</operation>
+    	<operation>
+    		<search position="before"><![CDATA[
+			<?php echo $footer; ?>
+    			]]></search>
+    		<add><![CDATA[
+			<script><!--
+			$('.js-remove-pdf-button').on('click', function(e){
+			  var $this = $(this);
+			  var href = $this.attr('href');
+
+			  if(confirm('Are you sure you wish to unattach this PDF?')){
+			    window.location.href  = href;
+			  }else{
+			    return false;
+			  }
+
+			  e.preventDefault();
+			});
+
+			//--></script>
+    			]]></add>
+    	</operation>
+    </file>
+    <file name="catalog/controller/product/product.php">
+    	<operation>
+    		<search position="before"><![CDATA[
+			$this->load->model('tool/image');
+    			]]></search>
+    		<add><![CDATA[
+			// Load the pdfs into the $this->data['product_pdfs'];
+			$this->load->model('module/product_pdfs');
+			$this->data['product_pdfs']	= $this->model_module_product_pdfs->getGimmepdfs( $product_info['product_id'] );
+    			]]></add>
+    	</operation>
+    </file>
+    <file name="catalog/view/theme/*/template/product/product.tpl">
+    	<operation>
+    		<search position="after"><![CDATA[
+			$text_model;
+    			]]></search>
+    		<add><![CDATA[
+			<?php if($product_pdfs): ?>
+				<p>
+				<?php $pdf_count = 0; ?>
+				<?php foreach($product_pdfs as $pdf): ?>
+					<?php $pdf_count++; ?>
+					<span>Pdf #<?php echo $pdf_count; ?>: <?php echo $pdf['display_name']; ?></span> : <a href="<?php echo HTTP_SERVER."product_pdfs/".$pdf['filename']; ?>">View</a> / <a download href="<?php echo HTTP_SERVER."product_pdfs/".$pdf['filename']; ?>">Download</a><br>
+				<?php endforeach; ?>
+				</p>
+			<?php endif; ?>
+    			]]></add>
+    	</operation>
+    </file>
+</modification>
