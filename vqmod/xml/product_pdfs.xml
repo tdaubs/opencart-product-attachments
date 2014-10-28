@@ -47,7 +47,7 @@
 			<add><![CDATA[
 			$this->data['product_pdfs']	=	array();
 	    	if( isset($this->request->get['product_id']) ){
-	    		$this->data['pdf_list']	=	$this->model_module_product_pdfs->getPdfSelectList($this->request->get['product_id']);
+	    		$this->data['pdf_list']	=	$this->model_module_product_pdfs->get_unattached_attachments($this->request->get['product_id']);
 	    		$product_pdfs	=	$this->model_module_product_pdfs->get_the_attachments($this->request->get['product_id']);
 	    		foreach ($product_pdfs as $pdf) {
 	    			$this->data['product_pdfs'][]	=	$pdf;
