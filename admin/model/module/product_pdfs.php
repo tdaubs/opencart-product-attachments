@@ -46,7 +46,7 @@ class ModelModuleProductPdfs extends Model {
 	}
 
 	// Used in Product Page to build the <select> list
-	public function getPdfSelectList($product_id) {
+	public function get_unattached_attachments($product_id) {
 		$return_array	=	array();
 
 		$this->load->model('setting/setting');
