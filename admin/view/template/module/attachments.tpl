@@ -36,13 +36,13 @@
             </tr>
           </thead>
           <?php $module_row = 0; ?>
-          <?php foreach ($product_pdfs as $pdf) { 
-            extract($pdf);
+          <?php foreach ($attachments as $attachment) { 
+            extract($attachment);
             ?>
           <tbody>
             <tr>
               <td width="200px" class="left">
-                <input type="text" name="attachments[<?php echo $pdf_id; ?>]" value="<?php echo $display_name; ?>">
+                <input type="text" name="attachments[<?php echo $attachment_id; ?>]" value="<?php echo $display_name; ?>">
               </td>
               <td class="left">
                 <span><?php echo $filename; ?></span>
