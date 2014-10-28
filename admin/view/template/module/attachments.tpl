@@ -42,7 +42,7 @@
           <tbody>
             <tr>
               <td width="200px" class="left">
-                <input type="text" name="productpdf[<?php echo $pdf_id; ?>]" value="<?php echo $display_name; ?>">
+                <input type="text" name="attachments[<?php echo $pdf_id; ?>]" value="<?php echo $display_name; ?>">
               </td>
               <td class="left">
                 <span><?php echo $filename; ?></span>
