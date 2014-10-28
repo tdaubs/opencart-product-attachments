@@ -108,6 +108,17 @@
 				]]></add>
 		</operation>
     </file>
+    <file name="admin/language/english/catalog/category.php">
+    	<operation>
+    		<search position="before"><![CDATA[
+			$_['entry_layout']
+    			]]></search>
+    		<add><![CDATA[
+			$_['entry_upload_pdf']		= 'Attach Product PDFs';
+			$_['entry_product_pdfs']	= 'Currently Attached PDFs';
+    			]]></add>
+    	</operation>
+    </file>
     <file name="admin/language/english/catalog/product.php">
     	<operation>
     		<search position="before"><![CDATA[
