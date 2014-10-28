@@ -97,9 +97,10 @@ class ModelModuleAttachments extends Model {
 					$attachment_id	=	$row['attachment_id'];
 
 					// Query for all products with links to current pdf
-					// $query			=	$this->db->query("SELECT * FROM " . DB_PREFIX . $table . "_to_attachment WHERE attachment_id = '$attachment_id' ");
-					//$num_attached	=	$query->num_rows;
-					$num_attached = 99; // fix
+					$query_products			=	$this->db->query("SELECT * FROM " . DB_PREFIX . "product_to_attachment WHERE attachment_id = '$attachment_id' ");
+					$query_categories		=	$this->db->query("SELECT * FROM " . DB_PREFIX . "category_to_attachment WHERE attachment_id = '$attachment_id' ");
+					$num_products_attached	=	$query_products->num_rows;
+					$num_categories_attached=	$query_categories->num_rows;
 
 					// Get all products attached to this pdf and store as array
 					$attached_products	=	$this->getAttachedProducts($attachment_id);
@@ -110,7 +111,8 @@ class ModelModuleAttachments extends Model {
 						'filename'			=>	$filename,
 						'display_name'		=>	$display_name,
 						'attachment_id'		=>	$attachment_id,
-						'num_attached'		=>	$num_attached,
+						'num_products_attached'		=>	$num_products_attached,
+						'num_categories_attached'	=>	$num_categories_attached,
 						'attached_products'	=>	$attached_products,
 						'attached_categories' => $attached_categories
 						);					
@@ -209,7 +211,7 @@ class ModelModuleAttachments extends Model {
 					'product_name'		=>	$product_name,
 					'id'				=>	$id,
 					'attachment_id'		=>	$attachment_id,
-					'unattach_params'	=>	"&" . $table . "_id=$id&attachment_id=$attachment_id"
+					'unattach_params'	=>	"&" . $table . "_id=$id&attachment_id=$attachment_id&admin_section=" . $table . "&redirect_to_module=true"
 					);
 			}
 		}
