@@ -213,6 +213,7 @@ class ModelModuleProductPdfs extends Model {
 	public function createTable(){
 		$query = $this->db->query("CREATE TABLE IF NOT EXISTS " . DB_PREFIX . "product_pdfs (pdf_id INT(11) AUTO_INCREMENT, filename VARCHAR(255), display_name VARCHAR(255), PRIMARY KEY (pdf_id))");
 		$query = $this->db->query("CREATE TABLE IF NOT EXISTS " . DB_PREFIX . "product_to_pdf (product_to_pdf_id INT(11) AUTO_INCREMENT, product_id INT(11), pdf_id INT(11), PRIMARY KEY (product_to_pdf_id))");
+		$query = $this->db->query("CREATE TABLE IF NOT EXISTS " . DB_PREFIX . "category_to_attachment (category_to_attachment_id INT(11) AUTO_INCREMENT, category_id INT(11), attachment_id INT(11), PRIMARY KEY (category_to_attachment_id))");
 	}
 
 }
