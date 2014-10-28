@@ -46,7 +46,7 @@ class ModelModuleProductPdfs extends Model {
 	}
 
 	// Used in Product Page to build the <select> list
-	public function get_unattached_attachments($product_id) {
+	public function get_unattached_attachments($id) {
 		$return_array	=	array();
 
 		$this->load->model('setting/setting');
@@ -62,7 +62,7 @@ class ModelModuleProductPdfs extends Model {
 					
 					$pdf_id	=	$row['pdf_id'];
 
-					$query	=	$this->db->query("SELECT * FROM ".DB_PREFIX."product_to_pdf WHERE pdf_id = '$pdf_id' AND product_id = '$product_id' ");
+					$query	=	$this->db->query("SELECT * FROM ".DB_PREFIX."product_to_pdf WHERE pdf_id = '$pdf_id' AND product_id = '$id' ");
 
 					// If the Current pdf is already attached, dont include in the <select> list.
 					if( $query->num_rows == 0 ){
