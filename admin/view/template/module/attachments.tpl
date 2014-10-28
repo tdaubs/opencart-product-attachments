@@ -32,6 +32,7 @@
               <td class="left"><?php echo $entry_pdf_filename; ?></td>
               <td class="left"><?php echo $entry_num_attached; ?></td>
               <td class="left"><?php echo $entry_products_attached_to; ?></td>
+              <td class="left"><?php echo $entry_categories_attached_to; ?></td>
               <td width="200px" class="left"><?php echo $entry_delete_pdf; ?></td>
             </tr>
           </thead>
@@ -64,6 +65,24 @@
                 else:
                 ?>
                   <p><a href="<?php echo $product_url; ?>">Attach Some Products</a></p>
+                <?php
+                endif; 
+                ?>
+              </td>
+              <td class="left">
+                  <?php 
+                  if( isset($attached_categories) && !empty($attached_categories) ):
+                    foreach ($attached_categories as $category):
+                    extract($category);
+                  ?>
+                  <p><a href="<?php echo $category_update_url; ?>&category_id=<?php echo $category_id; ?>"><?php echo $category_name; ?></a>&nbsp;<a class="js-remove-pdf-button" href="<?php echo $pdf_remove_action.$unattach_params; ?>">[Unattach]</a></p>
+                  <?php endforeach; 
+                  ?>
+                  <p><a href="<?php echo $category_url; ?>">Attach to more categories</a></p>
+                <?php
+                else:
+                ?>
+                  <p><a href="<?php echo $category_url; ?>">Attach to some categories</a></p>
                 <?php
                 endif; 
                 ?>
