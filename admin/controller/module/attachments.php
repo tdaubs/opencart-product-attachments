@@ -1,17 +1,17 @@
 <?php
-class ControllerModuleProductPdfs extends Controller {
+class ControllerModuleAttachments extends Controller {
 	private $error = array(); 
 	
 	public function index() {
-		$this->language->load('module/product_pdfs');
-		$this->load->model('module/product_pdfs');
+		$this->language->load('module/attachments');
+		$this->load->model('module/attachments');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
-		$this->data['delete_url'] 			= $this->url->link('module/product_pdfs/delete', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['delete_url'] 			= $this->url->link('module/attachments/delete', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['product_url']			=	$this->url->link('catalog/product', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['product_update_url']	=	$this->url->link('catalog/product/update', 'token=' . $this->session->data['token'], 'SSL');
-		$this->data['pdf_remove_action'] 	= $this->url->link('module/product_pdfs/removepdf', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['pdf_remove_action'] 	= $this->url->link('module/attachments/removepdf', 'test=moo&token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['breadcrumbs'] = array();
 
@@ -29,7 +29,7 @@ class ControllerModuleProductPdfs extends Controller {
 		
    		$this->data['breadcrumbs'][] = array(
        		'text'      => $this->language->get('heading_title'),
-			'href'      => $this->url->link('module/product_pdfs', 'token=' . $this->session->data['token'], 'SSL'),
+			'href'      => $this->url->link('module/attachments', 'token=' . $this->session->data['token'], 'SSL'),
       		'separator' => ' :: '
    		);
 		
@@ -37,12 +37,12 @@ class ControllerModuleProductPdfs extends Controller {
 		$this->data['action']	=	'';
 
 		if( isset($_FILES) && !empty($_FILES) && $_FILES['pdf_attachment']['error'] != '4' ){
-			$uploaded_pdf	=	$this->model_module_product_pdfs->uploadPdf($_FILES);
+			$uploaded_pdf	=	$this->model_module_attachments->uploadPdf($_FILES);
 		}
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			if( isset($this->request->post['productpdf']) ){
-				$this->model_module_product_pdfs->updatePdfs($this->request->post['productpdf']);
+			if( isset($this->request->post['attachments']) ){
+				$this->model_module_attachments->updatePdfs($this->request->post['attachments']);
 			}
 			$this->session->data['success'] = $this->language->get('text_success');				
 		}
@@ -83,9 +83,9 @@ class ControllerModuleProductPdfs extends Controller {
 			$this->data['error_warning'] = '';
 		}
 		
-		$this->data['product_pdfs']	=	$this->model_module_product_pdfs->getPdfsForAdmin();
+		$this->data['attachments']	=	$this->model_module_attachments->getPdfsForAdmin();
 
-		$this->template = 'module/product_pdfs.tpl';
+		$this->template = 'module/attachments.tpl';
 		$this->children = array(
 			'common/header',
 			'common/footer'
@@ -96,51 +96,60 @@ class ControllerModuleProductPdfs extends Controller {
 	}
 
 	public function delete(){
-		if( $this->request->get['pdf_id'] ){
-			$pdf_id	=	$this->request->get['pdf_id'];
+		if( $this->request->get['attachment_id'] ){
+			$attachment_id	=	$this->request->get['attachment_id'];
 			if( !$this->validate() ){
 				$this->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
 			}else{
 				
-				if( $q = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_pdfs WHERE pdf_id = '$pdf_id' ") ){
-					$file_to_delete	=	DIR_PDFS.$q->row['filename'];
-					$this->db->query("DELETE FROM ".DB_PREFIX."product_pdfs WHERE pdf_id = '$pdf_id' ");
-					$this->db->query("DELETE FROM ".DB_PREFIX."product_to_pdf WHERE pdf_id = '$pdf_id' ");
+				if( $q = $this->db->query("SELECT * FROM " . DB_PREFIX . "attachments WHERE attachment_id = '$attachment_id' ") ){
+					$file_to_delete	=	DIR_PDFS . $q->row['filename'];
+					$this->db->query("DELETE FROM " . DB_PREFIX . "attachments WHERE attachment_id = '$attachment_id' ");
+					$this->db->query("DELETE FROM " . DB_PREFIX . "product_to_attachment WHERE attachment_id = '$attachment_id' ");
+					$this->db->query("DELETE FROM " . DB_PREFIX . "category_to_attachment WHERE attachment_id = '$attachment_id' ");
 					unlink($file_to_delete);
-					$this->session->data['success']	=	"PDF Successfully Deleted. Any previous associations with products have also been deleted.";
+					$this->session->data['success']	=	"PDF Successfully Deleted. Any previous associations with products have also been removed.";
 				}
 			}
 
 		}
-		$this->redirect($this->url->link('module/product_pdfs', 'token=' . $this->session->data['token'], 'SSL'));
+		$this->redirect($this->url->link('module/attachments', 'token=' . $this->session->data['token'], 'SSL'));
 	}
 
 	public function removepdf(){
+			
 		if( !$this->validate() ){
 			$this->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
 		}else{
 			
-			if( isset($this->request->get['product_id']) && isset($this->request->get['pdf_id']) ){
-				$this->load->model('module/product_pdfs');
+			$admin_section = $this->request->get['admin_section'];
+			
+			if( isset($this->request->get[$admin_section . '_id']) && isset($this->request->get['attachment_id']) ){
+				$this->load->model('module/attachments');
 				// Detach the pdf from the product
-				$this->model_module_product_pdfs->pdfDetach( $this->request->get['product_id'], $this->request->get['pdf_id'] );
+
+				$this->model_module_attachments->pdfDetach( $this->request->get[$admin_section . '_id'], $this->request->get['attachment_id'], $admin_section );
 
 				// Redirect based on where the user has used the detach function.
-				if( isset($this->request->get['admin_section']) && $this->request->get['admin_section'] == 'product' ){
+				if($admin_section == 'product'){
 					$this->redirect($this->url->link('catalog/product/update', 'token=' . $this->session->data['token'] . '&product_id=' . $this->request->get['product_id'], 'SSL'));
-				}else{
-					$this->redirect($this->url->link('module/product_pdfs', 'token=' . $this->session->data['token'], 'SSL'));
+				}elseif($admin_section == 'category'){
+					$this->redirect($this->url->link('catalog/category/update', 'token=' . $this->session->data['token'] . '&category_id=' . $this->request->get['category_id'], 'SSL'));
+				} else {
+					$this->redirect($this->url->link('module/attachments', 'token=' . $this->session->data['token'], 'SSL'));
 				}
+			} else {
+				$this->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 
 		}
 	}
 
 	public function install() {
-    	$this->load->model('module/product_pdfs');
+    	$this->load->model('module/attachments');
     	
    		// Make the pdf folder in root if user hasn't already done so.
-    	$path_to_pdf	=	 DIR_APPLICATION . '../product_pdfs/';
+    	$path_to_pdf	=	 DIR_APPLICATION . '../attachments/';
        	if( !is_dir($path_to_pdf) ){
 
        		if ( !mkdir($path_to_pdf, 0777) ) {
@@ -153,21 +162,21 @@ class ControllerModuleProductPdfs extends Controller {
 
     	// Activate the module status
     	$this->load->model('setting/setting');
-    	$this->model_setting_setting->editSetting('product_pdfs', array('product_pdfs_status'=>1));
+    	$this->model_setting_setting->editSetting('attachments', array('attachments_status'=>1));
 
     	// Create the two database tables for the module.
-		$this->model_module_product_pdfs->createTable();   	    	
+		$this->model_module_attachments->createTable();   	    	
 
    	}
 
    	public function uninstall() {
     	$this->load->model('setting/setting');
     	// Change status setting to 0 so wont be displayed
-    	$this->model_setting_setting->editSetting('product_pdfs', array('product_pdfs_status'=>0));
+    	$this->model_setting_setting->editSetting('attachments', array('attachments_status'=>0));
    	}
 
 	protected function validate() {
-		if (!$this->user->hasPermission('modify', 'module/product_pdfs')) {
+		if (!$this->user->hasPermission('modify', 'module/attachments')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 		
