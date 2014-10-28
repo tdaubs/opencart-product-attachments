@@ -30,7 +30,6 @@
             <tr>
               <td width="200px" class="left"><?php echo $entry_pdf_displayname; ?></td>
               <td class="left"><?php echo $entry_pdf_filename; ?></td>
-              <td class="left"><?php echo $entry_num_attached; ?></td>
               <td class="left"><?php echo $entry_products_attached_to; ?></td>
               <td class="left"><?php echo $entry_categories_attached_to; ?></td>
               <td width="200px" class="left"><?php echo $entry_delete_pdf; ?></td>
@@ -49,15 +48,12 @@
                 <span><?php echo $filename; ?></span>
               </td>
               <td class="left">
-                <span><?php echo $num_attached; ?></span>
-              </td>
-              <td class="left">
                   <?php 
                   if( isset($attached_products) && !empty($attached_products) ):
                     foreach ($attached_products as $prod):
                     extract($prod);
                   ?>
-                  <p><a href="<?php echo $product_update_url; ?>&product_id=<?php echo $product_id; ?>"><?php echo $product_name; ?></a>&nbsp;<a class="js-remove-pdf-button" href="<?php echo $pdf_remove_action.$unattach_params; ?>">[Unattach]</a></p>
+                  <p><strong>Currently attached to <?php echo $num_products_attached; ?></strong><br><a href="<?php echo $product_update_url; ?>&product_id=<?php echo $product_id; ?>"><?php echo $product_name; ?></a>&nbsp;<a class="js-remove-pdf-button" href="<?php echo $pdf_remove_action.$unattach_params; ?>">[Unattach]</a></p>
                   <?php endforeach; 
                   ?>
                   <p><a href="<?php echo $product_url; ?>">Attach More Products</a></p>
@@ -75,7 +71,7 @@
                     foreach ($attached_categories as $category):
                     extract($category);
                   ?>
-                  <p><a href="<?php echo $category_update_url; ?>&category_id=<?php echo $category_id; ?>"><?php echo $category_name; ?></a>&nbsp;<a class="js-remove-pdf-button" href="<?php echo $pdf_remove_action.$unattach_params; ?>">[Unattach]</a></p>
+                  <p><strong>Currently attached to <?php echo $num_categories_attached; ?></strong><br><a href="<?php echo $category_update_url; ?>&category_id=<?php echo $category_id; ?>"><?php echo $product_name; ?></a>&nbsp;<a class="js-remove-pdf-button" href="<?php echo $pdf_remove_action.$unattach_params; ?>">[Unattach]</a></p>
                   <?php endforeach; 
                   ?>
                   <p><a href="<?php echo $category_url; ?>">Attach to more categories</a></p>
@@ -87,7 +83,7 @@
                 endif; 
                 ?>
               </td>
-              <td width="200px" class="left"><a class="button js-delete-pdf" href="<?php echo $delete_url; ?>&pdf_id=<?php echo $pdf_id; ?>">Delete PDF</a></td>
+              <td width="200px" class="left"><a class="button js-delete-pdf" href="<?php echo $delete_url; ?>&attachment_id=<?php echo $attachment_id; ?>">Delete PDF</a></td>
             </tr>
           </tbody>
           <?php $module_row++; ?>
