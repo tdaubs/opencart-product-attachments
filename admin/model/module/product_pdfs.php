@@ -2,14 +2,18 @@
 class ModelModuleProductPdfs extends Model {
 
 	// Get list of pdfs that are attached to a product. (used in admin product form)
-	public function getProductPdfs($product_id) {
+	public function get_the_attachments($id, $table='product') {
 		$return_array	=	array();
 
 		$this->load->model('setting/setting');
 		$pdf_setting	=	$this->model_setting_setting->getSetting('product_pdfs');
 		if( !empty($pdf_setting) && $pdf_setting['product_pdfs_status'] == '1' ){
 		
-			$result	=	$this->db->query("SELECT * FROM ".DB_PREFIX."product_to_pdf WHERE product_id = '$product_id' ");
+			if ($table == 'product') {
+				$result	=	$this->db->query("SELECT * FROM ".DB_PREFIX."product_to_pdf WHERE product_id = '$id' ");
+			} else {
+				$result	=	$this->db->query("SELECT * FROM ".DB_PREFIX."category_to_attachment WHERE category_id = '$id' ");
+			}
 			
 			// Have we found any instances of the product_id in the product_to_pdf table?
 			if($result->num_rows){
@@ -20,13 +24,18 @@ class ModelModuleProductPdfs extends Model {
 					$filename			=	$q->row['filename'];
 					$display_name		=	$q->row['display_name'];
 					$pdf_id				=	$q->row['pdf_id'];
-					$unattach_params	=	"&product_id=$product_id&pdf_id=$pdf_id";
+
+					if ($table == 'product') {
+						$unattach_params	=	"&product_id=$id&pdf_id=$pdf_id";
+					} else {
+						$unattach_params	=	"&category_id=$id&pdf_id=$pdf_id";
+					}
 
 					$return_array[]	=	array(
 						'filename'			=>	$filename,
 						'display_name'		=>	$display_name,
 						'pdf_id'			=>	$pdf_id,
-						'product_id'		=>	$product_id,
+						'product_id'		=>	$id,
 						'unattach_params'	=>	$unattach_params
 						);
 				}
