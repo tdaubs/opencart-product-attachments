@@ -4,6 +4,58 @@
 	<version>1.0</version>
 	<vqmver>2.3.2</vqmver>
 	<author>David Peach</author>
+	<file name="admin/controller/catalog/category.php">
+		<operation>
+			<search position="after"><![CDATA[
+			public function update() {
+				]]></search>
+			<add><![CDATA[
+			$this->load->model('module/product_pdfs');
+				]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[
+			$this->model_catalog_category->editCategory($this->request->get['category_id'], $this->request->post);
+				]]></search>
+			<add><![CDATA[
+			if($this->request->post['pdf_attachment'] != 0){
+				$this->model_module_product_pdfs->pdfAttach($this->request->get['category_id'], $this->request->post['pdf_attachment']);
+			}
+				]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$this->data['entry_layout']
+				]]></search>
+			<add><![CDATA[
+			$this->data['entry_product_pdfs']	=	$this->language->get('entry_product_pdfs');
+			$this->data['entry_upload_pdf']		=	$this->language->get('entry_upload_pdf');
+				]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+				$this->data['cancel'] =
+				]]></search>
+			<add><![CDATA[
+				$this->data['pdf_remove_action'] = $this->url->link('module/product_pdfs/removepdf', 'token=' . $this->session->data['token'] . $url , 'SSL');
+				]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[
+			$this->load->model('localisation/language');
+				]]></search>
+			<add><![CDATA[
+			$this->data['product_pdfs']	=	array();
+	    	if( isset($this->request->get['category_id']) ){
+	    		$this->data['pdf_list']	=	$this->model_module_product_pdfs->get_unattached_attachments($this->request->get['category_id'], 'category');
+	    		$product_pdfs	=	$this->model_module_product_pdfs->get_the_attachments($this->request->get['category_id']);
+	    		foreach ($product_pdfs as $pdf) {
+	    			$this->data['product_pdfs'][]	=	$pdf;
+	    		}
+	    	}
+				]]></add>
+		</operation>
+	</file>
 	<file name="admin/controller/catalog/product.php">
 		<operation>
 			<search position="after"><![CDATA[
