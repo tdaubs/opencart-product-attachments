@@ -165,7 +165,7 @@ class ControllerModuleAttachments extends Controller {
 
     	// Activate the module status
     	$this->load->model('setting/setting');
-    	$this->model_setting_setting->editSetting('attachments', array('attachments_status'=>1));
+    	$this->model_setting_setting->editSetting('attachments', array('attachments_status' => 1));
 
     	// Create the two database tables for the module.
 		$this->model_module_attachments->createTable();   	    	
@@ -175,7 +175,7 @@ class ControllerModuleAttachments extends Controller {
    	public function uninstall() {
     	$this->load->model('setting/setting');
     	// Change status setting to 0 so wont be displayed
-    	$this->model_setting_setting->editSetting('attachments', array('attachments_status'=>0));
+    	$this->model_setting_setting->editSetting('attachments', array('attachments_status' => 0));
    	}
 
 	protected function validate() {
