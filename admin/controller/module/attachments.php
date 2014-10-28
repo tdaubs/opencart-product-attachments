@@ -13,7 +13,7 @@ class ControllerModuleAttachments extends Controller {
 		$this->data['product_update_url']	=	$this->url->link('catalog/product/update', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['category_url']			=	$this->url->link('catalog/category', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['category_update_url']	=	$this->url->link('catalog/category/update', 'token=' . $this->session->data['token'], 'SSL');
-		$this->data['pdf_remove_action'] 	= $this->url->link('module/attachments/removepdf', 'test=moo&token=' . $this->session->data['token'], 'SSL');
+		$this->data['pdf_remove_action'] 	= $this->url->link('module/attachments/removepdf', 'token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['breadcrumbs'] = array();
 
@@ -134,13 +134,18 @@ class ControllerModuleAttachments extends Controller {
 				$this->model_module_attachments->pdfDetach( $this->request->get[$admin_section . '_id'], $this->request->get['attachment_id'], $admin_section );
 
 				// Redirect based on where the user has used the detach function.
-				if($admin_section == 'product'){
-					$this->redirect($this->url->link('catalog/product/update', 'token=' . $this->session->data['token'] . '&product_id=' . $this->request->get['product_id'], 'SSL'));
-				}elseif($admin_section == 'category'){
-					$this->redirect($this->url->link('catalog/category/update', 'token=' . $this->session->data['token'] . '&category_id=' . $this->request->get['category_id'], 'SSL'));
-				} else {
+				if (!empty($this->request->get['redirect_to_module'])) {
 					$this->redirect($this->url->link('module/attachments', 'token=' . $this->session->data['token'], 'SSL'));
+				} else {
+					if($admin_section == 'product'){
+						$this->redirect($this->url->link('catalog/product/update', 'token=' . $this->session->data['token'] . '&product_id=' . $this->request->get['product_id'], 'SSL'));
+					}elseif($admin_section == 'category'){
+						$this->redirect($this->url->link('catalog/category/update', 'token=' . $this->session->data['token'] . '&category_id=' . $this->request->get['category_id'], 'SSL'));
+					} else {
+						$this->redirect($this->url->link('module/attachments', 'token=' . $this->session->data['token'], 'SSL'));
+					}
 				}
+
 			} else {
 				$this->redirect($this->url->link('extension/module', 'token=' . $this->session->data['token'], 'SSL'));
 			}
