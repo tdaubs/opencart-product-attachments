@@ -11,6 +11,8 @@ class ControllerModuleAttachments extends Controller {
 		$this->data['delete_url'] 			= $this->url->link('module/attachments/delete', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['product_url']			=	$this->url->link('catalog/product', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['product_update_url']	=	$this->url->link('catalog/product/update', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['category_url']			=	$this->url->link('catalog/category', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['category_update_url']	=	$this->url->link('catalog/category/update', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['pdf_remove_action'] 	= $this->url->link('module/attachments/removepdf', 'test=moo&token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['breadcrumbs'] = array();
@@ -53,6 +55,7 @@ class ControllerModuleAttachments extends Controller {
 		$this->data['entry_pdf_filename']		=	$this->language->get('entry_pdf_filename');
 		$this->data['entry_num_attached']		=	$this->language->get('entry_num_attached');
 		$this->data['entry_products_attached_to']	=	$this->language->get('entry_products_attached_to');
+		$this->data['entry_categories_attached_to']	=	$this->language->get('entry_categories_attached_to');
 		$this->data['entry_delete_pdf']			=	$this->language->get('entry_delete_pdf');
 
 		$this->data['button_add_pdf']			=	$this->language->get('button_add_pdf');
